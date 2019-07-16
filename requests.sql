@@ -37,6 +37,7 @@ FROM
   SELECT  count(*) AS trial
   FROM accounts
   WHERE date_part('month', trial_started) = date_part('month', now())
+  AND trial_ended > now()
   ) t,
 ( /*Количество новых платных подписок*/
   SELECT  count(*) AS premium
@@ -83,7 +84,7 @@ FROM
   JOIN accounts a
   ON o.account_id = a.id
   WHERE o.created = a.paid_started -- Отсеивание устаревших платежей 
-  AND a.paid_cancelled >= now() -- Проверка актуальности подписки
+  AND a.paid_cancelled > now() -- Проверка актуальности подписки
   AND currency = 'EUR'
 ) e,
 
@@ -93,7 +94,7 @@ FROM
   JOIN accounts a
   ON o.account_id = a.id
   WHERE o.created = a.paid_started -- Отсеивание устаревших платежей 
-  AND a.paid_cancelled >= now() -- Проверка актуальности подписки
+  AND a.paid_cancelled > now() -- Проверка актуальности подписки
   AND currency = 'USD'
 ) u,
 
@@ -103,6 +104,6 @@ FROM orders o
 JOIN accounts a
 ON o.account_id = a.id
 WHERE o.created = a.paid_started -- Отсеивание устаревших платежей 
-AND a.paid_cancelled >= now() -- Проверка актуальности подписки
+AND a.paid_cancelled > now() -- Проверка актуальности подписки
 AND currency = 'RUB'
 ) r
